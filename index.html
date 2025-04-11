@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Flight Chatbot</title>
+</head>
+<body>
+  <h1>Flight Finder</h1>
+  <input id="source" placeholder="Source (e.g. DEL)" />
+  <input id="destination" placeholder="Destination (e.g. PAT)" />
+  <input id="date" type="date" />
+  <button onclick="fetchFlights()">Find Flights</button>
+  <pre id="result"></pre>
+
+  <script>
+    function fetchFlights() {
+      const source = document.getElementById("source").value;
+      const destination = document.getElementById("destination").value;
+      const date = document.getElementById("date").value;
+
+      fetch("http://127.0.0.1:5000/flights", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ source, destination, date })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+      })
+      .catch(err => {
+        document.getElementById("result").textContent = "Error: " + err;
+      });
+    }
+  </script>
+</body>
+</html>

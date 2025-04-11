@@ -1,0 +1,12 @@
+import requests
+
+data = {
+    "source": "DEL",
+    "destination": "PAT",
+    "date": "2025-04-15"
+}
+
+response = requests.post("http://127.0.0.1:5000/flights", json=data)
+
+print(response.status_code)
+print(response.text)  # <--- This is what "check response.text" refers to
