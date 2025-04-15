@@ -1,35 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Flight Chatbot</title>
+  <meta charset="UTF-8">
+  <title>Flight Price Tracker</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #eef2f5;
+      padding: 30px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    form {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    label, input {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    input {
+      padding: 10px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .result {
+      margin-top: 30px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .flight-card {
+      background: #fff;
+      margin-bottom: 15px;
+      padding: 15px;
+      border-left: 5px solid #007bff;
+      border-radius: 8px;
+    }
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Flight Finder</h1>
-  <input id="source" placeholder="Source (e.g. DEL)" />
-  <input id="destination" placeholder="Destination (e.g. PAT)" />
-  <input id="date" type="date" />
-  <button onclick="fetchFlights()">Find Flights</button>
-  <pre id="result"></pre>
+  <h1>✈️ Flight Price Tracker</h1>
+  <form method="post" action="/get_flights">
+    <label for="origin">From (IATA Code):</label>
+    <input type="text" name="origin" required>
 
-  <script>
-    function fetchFlights() {
-      const source = document.getElementById("source").value;
-      const destination = document.getElementById("destination").value;
-      const date = document.getElementById("date").value;
+    <label for="destination">To (IATA Code):</label>
+    <input type="text" name="destination" required>
 
-      fetch("http://127.0.0.1:5000/flights", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ source, destination, date })
-      })
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("result").textContent = JSON.stringify(data, null, 2);
-      })
-      .catch(err => {
-        document.getElementById("result").textContent = "Error: " + err;
-      });
-    }
-  </script>
+    <label for="date">Date (YYYY-MM-DD):</label>
+    <input type="date" name="date" required>
+
+    <button type="submit">Search Flights</button>
+  </form>
+
+  {% if error %}
+    <div class="error">{{ error }}</div>
+  {% endif %}
+
+  {% if flights %}
+  <div class="result">
+    <h2>Flights from {{ origin }} to {{ destination }} on {{ date }}</h2>
+    {% for flight in flights %}
+    <div class="flight-card">
+      <strong>{{ flight.airline }}</strong><br>
+      {{ flight.from }} → {{ flight.to }}<br>
+      Duration: {{ flight.duration }}<br>
+      Price: ₹{{ flight.price }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
 </body>
 </html>
